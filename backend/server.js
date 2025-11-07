@@ -179,7 +179,10 @@ function basicAdminAuth(req, res, next) {
 }
 
 // ----- admin routes (🚨 정적 서빙보다 '위'에 둔다)
-app.use("/admin", basicAdminAuth, express.static(backendDir));
+// ----- admin routes
+app.use("/admin", basicAdminAuth);
+app.use("/admin", express.static(backendDir));
+
 app.get("/admin", basicAdminAuth, (req, res) => {
   res.sendFile(path.join(backendDir, "admin.html"));
 });
