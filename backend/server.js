@@ -97,6 +97,20 @@ const s3 = new AWS.S3();
 
 
 
+// ✅ AWS S3 업로드 설정
+const upload = multer({
+  storage: multerS3({
+    s3: s3,
+    bucket: process.env.AWS_BUCKET_NAME, // ✅ Render 환경변수와 일치해야 함
+    acl: "public-read",
+    key: function (req, file, cb) {
+      const filename = `${Date.now()}-${file.originalname}`;
+      cb(null, filename);
+    },
+  }),
+});
+
+
 
 const PORT = Number(process.env.PORT || 3000);
 
@@ -196,17 +210,6 @@ app.use("/", express.static(frontendDir));
 
 // ----- multer
 // 🔹 S3에 직접 업로드되도록 설정
-const upload = multer({
-  storage: multerS3({
-    s3: s3,
-    bucket: process.env.AWS_BUCKET_NAME, // ✅ 수정됨
-    acl: "public-read",
-    key: function (req, file, cb) {
-      const filename = `${Date.now()}-${file.originalname}`;
-      cb(null, filename);
-    },
-  }),
-});
 
 
 
@@ -248,17 +251,24 @@ app.get("/outfits", basicAdminAuth, (req, res) => {
 
 app.post("/upload", basicAdminAuth, upload.single("image"), (req, res) => {
   try {
-    if (!req.file) return res.status(400).json({ success: false, error: "no_file" });
+    if (!req.file) {
+      return res.status(400).json({ success: false, error: "no_file" });
+    }
+
     const { groupName = "", name = "", date = "" } = req.body || {};
     const list = loadJson(OUTFITS_JSON);
+
     const rec = {
-      filename: req.file.filename,
-      path: req.file.location, // S3 업로드 URL
+      filename: req.file.key,            // ✅ S3 저장 키 사용
+      path: req.file.location,           // ✅ S3 URL
       uploadedAt: Date.now(),
-      groupName, name, date,
+      groupName,
+      name,
+      date,
       items: [],
       likes: 0,
     };
+
     list.unshift(rec);
     saveJson(OUTFITS_JSON, list);
     res.json({ success: true, outfit: rec });
@@ -267,6 +277,7 @@ app.post("/upload", basicAdminAuth, upload.single("image"), (req, res) => {
     res.status(500).json({ success: false, error: "upload_failed" });
   }
 });
+
 
 app.put("/update-outfit/:filename", basicAdminAuth, (req, res) => {
   const { filename } = req.params;
