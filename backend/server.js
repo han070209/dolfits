@@ -199,14 +199,15 @@ app.use("/", express.static(frontendDir));
 const upload = multer({
   storage: multerS3({
     s3: s3,
-    bucket: process.env.S3_BUCKET_NAME,
-    acl: "public-read", // 업로드 후 외부에서 볼 수 있게
+    bucket: process.env.AWS_BUCKET_NAME, // ✅ 수정됨
+    acl: "public-read",
     key: function (req, file, cb) {
       const filename = `${Date.now()}-${file.originalname}`;
       cb(null, filename);
     },
   }),
 });
+
 
 
 const storageReq = multer.diskStorage({
