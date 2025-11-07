@@ -1,9 +1,5 @@
 .env
 node_modules/
 logs/
-backups/
-uploads/
-auto_uploads/
-auto_uploads_x/
-request_uploads/
+backups/ 
 test_output.json
