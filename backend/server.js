@@ -13,6 +13,9 @@ import dotenv from "dotenv";
 import { fileURLToPath } from "url";
 import path from "path";
 import { spawn } from "child_process";
+import AWS from "aws-sdk";
+import multerS3 from "multer-s3";
+
 
 
 const app = express();
@@ -82,6 +85,17 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 dotenv.config({ path: path.join(__dirname, ".env") });
+
+// 🔹 AWS S3 설정
+AWS.config.update({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.AWS_REGION,
+});
+
+const s3 = new AWS.S3();
+
+
 
 
 const PORT = Number(process.env.PORT || 3000);
@@ -178,11 +192,19 @@ app.use("/auto_uploads", express.static(autoUploadFolder));
 app.use("/", express.static(frontendDir));
 
 // ----- multer
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, uploadFolder),
-  filename: (req, file, cb) => cb(null, `${Date.now()}${path.extname(file.originalname || ".jpg")}`),
+// 🔹 S3에 직접 업로드되도록 설정
+const upload = multer({
+  storage: multerS3({
+    s3: s3,
+    bucket: process.env.S3_BUCKET_NAME,
+    acl: "public-read", // 업로드 후 외부에서 볼 수 있게
+    key: function (req, file, cb) {
+      const filename = `${Date.now()}-${file.originalname}`;
+      cb(null, filename);
+    },
+  }),
 });
-const upload = multer({ storage });
+
 
 const storageReq = multer.diskStorage({
   destination: (req, file, cb) => cb(null, requestUploadFolder),
@@ -227,7 +249,7 @@ app.post("/upload", basicAdminAuth, upload.single("image"), (req, res) => {
     const list = loadJson(OUTFITS_JSON);
     const rec = {
       filename: req.file.filename,
-      path: `/uploads/${req.file.filename}`,
+      path: req.file.location, // S3 업로드 URL
       uploadedAt: Date.now(),
       groupName, name, date,
       items: [],
