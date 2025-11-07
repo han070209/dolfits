@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title >그룹별 착장 | DolFits</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cafe24+Ssurround&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="logo">DolFits</div>
+  <h1 class="group-title">그룹별 착장</h1>
+
+  <!-- 그룹별 목록을 표시할 컨테이너 -->
+  <div id="groupContainer" class="group-container"></div>
+
+  <script>
+    async function loadByGroup() {
+      try {
+        const res = await fetch(`/data/outfitss.json?t=${Date.now()}`, { cache: "no-store" });
+        if (!res.ok) throw new Error("outfitss.json 로드 실패");
+        const data = await res.json();
+
+        // ✅ 그룹별로 묶기
+        const grouped = {};
+        data.forEach(f => {
+          const group = f.groupName || "기타";
+          if (!grouped[group]) grouped[group] = [];
+          grouped[group].push(f);
+        });
+
+        const container = document.getElementById("groupContainer");
+
+        // ✅ 그룹별 섹션 구성
+        Object.entries(grouped).forEach(([groupName, outfits]) => {
+          const section = document.createElement("div");
+          section.className = "group-section";
+
+          const header = document.createElement("div");
+          header.className = "group-header";
+          header.textContent = `${groupName} (${outfits.length})`;
+
+          const list = document.createElement("div");
+          list.className = "group-list";
+          list.style.display = "none";
+
+          // ✅ 착장 카드 생성
+          outfits.forEach(f => {
+            const box = document.createElement("div");
+            box.className = "fit-box";
+
+            const img = document.createElement("img");
+            img.src = `/uploads/${encodeURIComponent(f.filename)}?v=${Date.now()}`;
+            img.alt = f.originalname || "fit";
+
+            const info = document.createElement("div");
+            info.className = "fit-info";
+            info.textContent = `${f.name || "이름 없음"}`;
+
+            box.appendChild(img);
+            box.appendChild(info);
+            list.appendChild(box);
+          });
+
+          // ✅ 클릭 시 펼치기 / 닫기
+          header.addEventListener("click", () => {
+            const isOpen = list.style.display === "grid";
+            document.querySelectorAll(".group-list").forEach(l => (l.style.display = "none"));
+            list.style.display = isOpen ? "none" : "grid";
+          });
+
+          section.appendChild(header);
+          section.appendChild(list);
+          container.appendChild(section);
+        });
+      } catch (err) {
+        console.error("❌ 그룹별 로드 오류:", err);
+      }
+    }
+
+    loadByGroup();
+  </script>
+
+  <script src="./menu.js" defer></script>
+  <script src="./lang.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="./menu.js" defer></script>
+
+  <title>인기 착장 top12 | DolFits</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  
+
+  <!-- 로고 -->
+  <div class="logo">DolFits</div>
+
+  <!-- 제목 -->
+  <h2 class="top-title" data-i18n="top_title">인기 착장 TOP12</h2>
+
+
+  <!-- 착장 컨테이너 -->
+  <div id="mainFits" class="fits-container"></div>
+
+  <!-- 돌고래 이미지 -->
+  <img src="images/dolphin.png" alt="dolphin" class="dolphin1">
+  <img src="images/dolphin.png" alt="dolphin" class="dolphin2">
+
+  <!-- 메뉴 스크립트 -->
+  
+
+  <script>
+    // ✅ 좋아요 상태 공통 관리 (홈과 완전히 공유)
+    function getLikedSet() {
+      try { return new Set(JSON.parse(localStorage.getItem("df_liked_set") || "[]")); }
+      catch { return new Set(); }
+    }
+    function saveLikedSet(set) {
+      localStorage.setItem("df_liked_set", JSON.stringify([...set]));
+    }
+
+    // ✅ 데이터 불러오기 (좋아요 순)
+    async function loadTopFits() {
+      const container = document.getElementById("mainFits");
+      container.innerHTML = "";
+
+      try {
+        const res = await fetch(`/data/outfitss.json?t=${Date.now()}`, { cache: "no-store" });
+        if (!res.ok) throw new Error("outfitss.json 로드 실패");
+        const json = await res.json();
+        const data = Array.isArray(json) ? json : (json.outfits || []);
+
+        // 좋아요 내림차순 정렬
+        const sorted = data
+          .filter(f => f.likes && f.likes > 0)
+          .sort((a, b) => (b.likes || 0) - (a.likes || 0))
+          .slice(0, 12);
+
+        const likedSet = getLikedSet();
+
+        sorted.forEach(f => {
+          const box = document.createElement("div");
+          box.className = "fit-box";
+
+          const img = document.createElement("img");
+          img.src = `/uploads/${encodeURIComponent(f.filename)}?v=${Date.now()}`;
+          img.alt = f.originalname || "fit image";
+
+          const info = document.createElement("div");
+          info.className = "fit-info";
+
+          const label = document.createElement("span");
+          label.textContent = `${f.groupName || "그룹명 없음"} · ${f.name || "이름 없음"}`;
+
+          const heart = document.createElement("span");
+          heart.className = "heart";
+          const isLiked = likedSet.has(f.filename);
+          heart.innerHTML = isLiked ? "❤️" : "♡";
+          if (isLiked) heart.classList.add("active");
+
+          const count = document.createElement("span");
+          count.className = "like-count";
+          count.textContent = f.likes > 0 ? ` ${f.likes}` : "";
+
+          // ✅ 하트 클릭 이벤트
+          heart.addEventListener("click", async (e) => {
+            e.stopPropagation();
+            try {
+              const nowLiked = !likedSet.has(f.filename);
+              heart.innerHTML = nowLiked ? "❤️" : "♡";
+              heart.classList.toggle("active", nowLiked);
+              heart.classList.add("pop");
+
+              if (nowLiked) likedSet.add(f.filename);
+              else likedSet.delete(f.filename);
+              saveLikedSet(likedSet);
+
+              const r = await fetch(`/like/${encodeURIComponent(f.filename)}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ action: nowLiked ? "like" : "unlike" }),
+              });
+              const j = await r.json();
+              if (j.success) count.textContent = j.likes > 0 ? ` ${j.likes}` : "";
+
+              setTimeout(() => heart.classList.remove("pop"), 300);
+            } catch (err) {
+              console.error("좋아요 오류:", err);
+            }
+          });
+
+          // ✅ 상세 페이지 이동
+          box.addEventListener("click", () => {
+            window.location.href = `/detail.html?file=${encodeURIComponent(f.filename)}`;
+          });
+
+          info.appendChild(label);
+          info.appendChild(heart);
+          info.appendChild(count);
+
+          box.appendChild(img);
+          box.appendChild(info);
+          container.appendChild(box);
+        });
+
+        if (!sorted.length) {
+          container.innerHTML = `<div class="fit-info" style="position:static;color:#333;background:transparent;text-align:left;padding:0;margin-left:120px;transform:none;opacity:1">아직 좋아요가 누적된 착장이 없습니다 🥲</div>`;
+        }
+      } catch (err) {
+        console.error("❌ 인기 착장 로드 오류:", err);
+        container.innerHTML = `<div class="fit-info" style="position:static;color:#333;background:transparent;text-align:left;padding:0;margin-left:120px;transform:none;opacity:1">데이터를 불러오지 못했습니다 😢</div>`;
+      }
+    }
+
+    // ✅ 메뉴 열기/닫기 (홈 동일)
+
+
+    // ✅ 초기 로드
+    loadTopFits();
+  </script>
+
+  <style>
+    /* h2 위치 조정 (로고 아래 왼쪽) */
+    .top-title {
+      position: absolute;
+      top: 180px;
+      left: 190px;
+      font-size: 24px;
+      font-weight: 700;
+      color: #222;
+      z-index: 2;
+    }
+    .fits-container { margin-top: 80px; }
+  </style>
+  <script src="./lang.js" defer></script>
+</body>
+</html>

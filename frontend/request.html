@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title data-i18n="request_title">착장 요청 | DolFits</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Cafe24+Ssurround&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    body {
+      font-family: 'Pretendard', sans-serif;
+      background: #f5f7fa;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding-top: 80px;
+    }
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 30px;
+    }
+    .request-form {
+      background: #fff;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, .1);
+      display: flex;
+      flex-direction: column;
+      width: 380px;
+    }
+    .request-form label {
+      font-weight: 600;
+      margin-bottom: 6px;
+      font-size: 15px;
+    }
+    .request-form input[type="text"],
+    .request-form input[type="date"],
+    .request-form input[type="file"] {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 15px;
+      margin-bottom: 18px;
+    }
+    .request-form button {
+      background: #3b82f6;
+      color: #fff;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color .2s ease;
+    }
+    .request-form button:hover {
+      background: #2563eb;
+    }
+    #responseMessage {
+      margin-top: 20px;
+      font-weight: 500;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- ✅ 공통 메뉴 -->
+  <script src="./menu.js"></script>
+
+  <div class="logo">DolFits</div>
+  <h1 data-i18n="uploadTitle">📮 착장 업로드 요청</h1>
+
+  <!-- ✅ 요청 폼 -->
+  <form id="requestForm" class="request-form" enctype="multipart/form-data">
+    <label for="date" data-i18n="labelDate">날짜</label>
+    <input type="date" id="date" name="date" required>
+
+    <label for="groupName" data-i18n="labelGroup">그룹명</label>
+    <input type="text" id="groupName" name="groupName"
+           placeholder="예: NewJeans" data-i18n-placeholder="ph_group" required>
+
+    <label for="name" data-i18n="labelName">이름</label>
+    <input type="text" id="name" name="name"
+           placeholder="예: 민지" data-i18n-placeholder="ph_name" required>
+
+    <label for="image" data-i18n="labelImage">참고 이미지</label>
+    <input type="file" id="image" name="image" accept="image/*" required>
+
+    <button type="submit" data-i18n="submitBtn">요청 보내기</button>
+  </form>
+
+  <p id="responseMessage"></p>
+
+  <script>
+    const form = document.getElementById('requestForm');
+    const message = document.getElementById('responseMessage');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      try {
+        const res = await fetch('/request-upload', {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          message.textContent = '✅ 요청이 접수되었습니다.';
+          message.style.color = 'green';
+          form.reset();
+        } else {
+          message.textContent = '❌ ' + (data.error || '요청 실패');
+          message.style.color = 'red';
+        }
+      } catch (err) {
+        message.textContent = '❌ 서버 통신 오류';
+        message.style.color = 'red';
+      }
+    });
+  </script>
+
+  <!-- ✅ 공통 스크립트 -->
+  <script src="./menu.js" defer></script>
+  <script src="./lang.js" defer></script>
+</body>
+</html>

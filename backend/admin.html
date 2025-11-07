@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <title>DolFits 관리자</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<script type="module" src="/admin/admin.js"></script>
+
+
+
+<style>
+#listBox {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+}
+.outfit-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+.outfit-card img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.outfit-meta { padding: 10px; }
+</style>
+
+
+
+<style>
+.outfit-card { border:1px solid #ddd; border-radius:8px; padding:10px; margin:10px 0; }
+.outfit-header { display:flex; align-items:center; justify-content:space-between; cursor:pointer; }
+.thumb { width:70px; height:70px; object-fit:cover; border-radius:6px; margin-right:10px; }
+.meta { flex:1; }
+.outfit-body { margin-top:8px; border-top:1px dashed #ccc; padding-top:10px; }
+.hidden { display:none; }
+.link-table td { padding:4px; }
+.add-link { margin:6px 0; }
+</style>
+
+
+  <style>
+    body {
+      font-family: system-ui, -apple-system, 'Noto Sans KR', sans-serif;
+      margin: 16px;
+      background: #fafafa;
+    }
+    h1 { margin: 0 0 12px; }
+    .card {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 16px;
+      margin: 12px 0;
+    }
+    label { font-size: 13px; color: #333; display:block; margin-bottom:4px; font-weight:600; }
+    input[type="text"], input[type="date"], input[type="file"] {
+      padding:8px; border:1px solid #ccc; border-radius:8px; min-width:180px; font-family:inherit;
+    }
+    button {
+      padding:8px 12px; border:none; border-radius:8px;
+      background:#111; color:#fff; cursor:pointer; font-size:14px;
+    }
+    button:hover { opacity:0.9; }
+    img.thumb { width:100px; height:100px; object-fit:cover; border-radius:8px; border:1px solid #eee; }
+    .row { display:flex; flex-wrap:wrap; gap:8px; align-items:flex-end; }
+
+    /* 자동수집(X) 섹션 */
+    #xList {
+      display:flex; flex-wrap:wrap; gap:12px; margin-top:10px;
+    }
+    .x-card {
+      width:180px; border:1px solid #ccc; border-radius:10px;
+      padding:8px; background:#f9f9f9; text-align:center;
+    }
+    .x-card img {
+      width:100%; height:120px; object-fit:cover; border-radius:8px; margin-bottom:6px;
+    }
+    .x-card small { display:block; color:#555; font-size:12px; margin-bottom:4px; }
+    .x-card button { width:80px; padding:6px 0; margin:2px; font-size:12px; }
+  </style>
+</head>
+<body>
+  <h1>DolFits 관리자</h1>
+
+  <!-- 🧩 업로드 기능 -->
+  <div class="card">
+    <h3>📤 새 착장 업로드</h3>
+    <div class="row">
+      <div>
+        <label>그룹명</label>
+        <input id="groupName" type="text" placeholder="예: NewJeans" />
+      </div>
+      <div>
+        <label>이름</label>
+        <input id="memberName" type="text" placeholder="예: 하니" />
+      </div>
+      <div>
+        <label>날짜</label>
+        <input id="uploadDate" type="date" />
+      </div>
+      <div>
+        <label>이미지 업로드</label>
+        <input id="uploadImage" type="file" accept="image/*" />
+      </div>
+      <div>
+        <button id="uploadBtn">업로드</button>
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+
+  <!-- 🧩 업로드 목록 -->
+  <!-- 📂 업로드 목록 -->
+<div class="card">
+  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+    <h3 style="margin:0;">📂 업로드 목록</h3>
+    <div>
+      <input id="searchInput" type="text" placeholder="🔍 그룹명, 이름, 날짜 검색..."
+        style="width:240px; padding:6px; border-radius:8px; border:1px solid #ccc;">
+      <button id="searchClear" style="margin-left:6px;">❌ 초기화</button>
+    </div>
+  </div>
+
+  <div id="listBox"></div>
+</div>
+
+
+<style>
+  .outfit-card {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    margin: 10px 0;
+    padding: 10px;
+  }
+  .outfit-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+  }
+  .thumb {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-right: 10px;
+  }
+  .meta { flex: 1; }
+  .outfit-body {
+    margin-top: 8px;
+    padding-top: 10px;
+    border-top: 1px dashed #ccc;
+  }
+  .hidden { display: none; }
+  .link-table td { padding: 4px; }
+  .add-link { margin: 8px 0; }
+</style>
+
+  </div>
+
+
+
+
+  <!-- 🧩 사용자 요청 관리 -->
+  <div class="card">
+    <h3>📮 사용자 요청 목록</h3>
+    <div id="requestList">불러오는 중...</div>
+  </div>
+
+  <!-- 🧩 자동수집(X) 이미지 승인 관리 -->
+  <div class="card">
+    <h3>🪄 자동수집(X) 이미지 승인 관리</h3>
+    <p style="font-size:14px;color:#555;">수집된 이미지를 검토 후 “승인” 시 자동으로 업로드 목록에 반영됩니다.</p>
+    <div class="row" style="margin-bottom:8px;">
+      <button id="refreshXList">🔄 목록 새로고침</button>
+      <button id="resyncXList" style="background:#555;">📁 폴더 재동기화</button>
+    </div>
+    <div id="xList">불러오는 중...</div>
+  </div>
+
+
+<div style="margin:10px 0;">
+
+</div>
+
+
+
+
+
+  <script>
+    // ✅ 업로드 목록 불러오기
+    async function loadOutfits() {
+      const box = document.getElementById("listBox");
+      box.textContent = "불러오는 중...";
+      try {
+        const res = await fetch("/outfits", { credentials: "include" });
+        const data = await res.json();
+        if (!data.success) throw new Error(data.error || "로드 실패");
+        box.innerHTML = "";
+        data.outfits.forEach(o => {
+          const div = document.createElement("div");
+          div.className = "row";
+          div.innerHTML = `
+            <img src="/uploads/${o.filename}" class="thumb">
+            <div><label>그룹명</label><input type="text" value="${o.groupName || ""}" id="g_${o.filename}"></div>
+            <div><label>이름</label><input type="text" value="${o.name || ""}" id="n_${o.filename}"></div>
+            <div><label>날짜</label><input type="date" value="${o.date || ""}" id="d_${o.filename}"></div>
+            <button onclick="saveMeta('${o.filename}')">메타 저장</button>
+            <button style="background:#b00" onclick="deleteOutfit('${o.filename}')">삭제</button>
+          `;
+          box.appendChild(div);
+        });
+      } catch (e) {
+        box.textContent = "⚠️ 오류: " + e.message;
+      }
+    }
+
+    async function saveMeta(filename) {
+      const meta = {
+        groupName: document.getElementById("g_" + filename).value,
+        memberName: document.getElementById("n_" + filename).value,
+        date: document.getElementById("d_" + filename).value
+      };
+      await fetch("/update-outfit/" + filename, {
+        method: "PUT",
+        headers: {"Content-Type": "application/json"},
+        credentials: "include",
+        body: JSON.stringify({ meta })
+      });
+      alert("✅ 저장 완료");
+    }
+
+    async function deleteOutfit(filename) {
+      if (!confirm("삭제할까요?")) return;
+      await fetch("/delete-outfit/" + filename, { method: "DELETE", credentials: "include" });
+      loadOutfits();
+    }
+
+    document.getElementById("uploadBtn").addEventListener("click", async () => {
+      const file = document.getElementById("uploadImage").files[0];
+      if (!file) return alert("이미지를 선택하세요");
+      const fd = new FormData();
+      fd.append("image", file);
+      fd.append("groupName", document.getElementById("groupName").value);
+      fd.append("name", document.getElementById("memberName").value);
+      fd.append("date", document.getElementById("uploadDate").value);
+      const res = await fetch("/upload", { method:"POST", body:fd, credentials:"include" });
+      const data = await res.json();
+      if (data.success) { alert("✅ 업로드 완료"); loadOutfits(); }
+      else alert("❌ 실패");
+    });
+
+    // ✅ 사용자 요청 목록
+    async function loadRequests() {
+      const box = document.getElementById("requestList");
+      box.textContent = "불러오는 중...";
+      try {
+        const res = await fetch("/requests", { credentials:"include" });
+        const data = await res.json();
+        if (!data.success) throw new Error(data.error || "불러오기 실패");
+        if (!data.requests.length) { box.textContent = "📭 요청 없음"; return; }
+        box.innerHTML = "";
+        data.requests.forEach(r => {
+          const div = document.createElement("div");
+          div.className = "row";
+          div.innerHTML = `
+            <img src="/request_uploads/${r.filename}" class="thumb">
+            <div style="margin-right:8px;">ID: ${r.id}</div>
+            <button style="background:#b00" onclick="deleteRequest('${r.id}')">삭제</button>
+          `;
+          box.appendChild(div);
+        });
+      } catch(e) {
+        box.textContent = "⚠️ 오류: " + e.message;
+      }
+    }
+
+    async function deleteRequest(id) {
+      if (!confirm("요청을 삭제할까요?")) return;
+      await fetch("/delete-request/" + id, { method:"DELETE", credentials:"include" });
+      loadRequests();
+    }
+
+    // ✅ 자동수집(X) 목록
+    async function loadXList() {
+      const box = document.getElementById("xList");
+      box.textContent = "불러오는 중...";
+      try {
+        const res = await fetch("/auto-outfits-x", { credentials:"include" });
+        const data = await res.json();
+        if (!data.success) throw new Error(data.error || "불러오기 실패");
+        if (!data.list.length) { box.textContent = "📭 수집 이미지 없음"; return; }
+        box.innerHTML = "";
+        data.list.forEach(item => {
+          const div = document.createElement("div");
+          div.className = "x-card";
+          div.innerHTML = `
+            <img src="/auto_uploads_x/${item.filename}" alt="${item.groupName || ""}">
+            <small>${item.groupName || "그룹명 없음"}</small>
+            <div>
+              <button class="approve">승인</button>
+              <button class="delete" style="background:#b00;">삭제</button>
+            </div>
+          `;
+          div.querySelector(".approve").onclick = () => approveX(item.filename, div);
+          div.querySelector(".delete").onclick = () => deleteX(item.filename, div);
+          box.appendChild(div);
+        });
+      } catch(e) {
+        box.textContent = "⚠️ 오류: " + e.message;
+      }
+    }
+
+    async function approveX(filename, card) {
+      if (!confirm("이 이미지를 업로드 목록에 승인할까요?")) return;
+      card.style.opacity="0.5";
+      const res = await fetch("/auto-approve-x/" + filename, { method:"POST", credentials:"include" });
+      const data = await res.json();
+      if (data.success) card.innerHTML = "✅ 승인 완료!";
+      else card.innerHTML = "❌ 실패";
+    }
+
+    async function deleteX(filename, card) {
+      if (!confirm("삭제할까요?")) return;
+      card.style.opacity="0.5";
+      const res = await fetch("/auto-delete-x/" + filename, { method:"DELETE", credentials:"include" });
+      const data = await res.json();
+      if (data.success) card.remove(); else card.innerHTML="❌ 삭제 실패";
+    }
+
+    document.getElementById("refreshXList").onclick = loadXList;
+    document.getElementById("resyncXList").onclick = async () => {
+      if (!confirm("폴더를 다시 스캔해 누락된 파일을 JSON에 반영할까요?")) return;
+      const btn = document.getElementById("resyncXList");
+      btn.disabled=true; btn.textContent="📂 동기화 중...";
+      const res = await fetch("/auto-resync-x", { method:"POST", credentials:"include" });
+      const data = await res.json();
+      alert(data.success ? `✅ ${data.added}개 추가됨 (${data.total}개 총합)` : "❌ 실패");
+      btn.disabled=false; btn.textContent="📁 폴더 재동기화";
+      loadXList();
+    };
+
+    // ✅ 페이지 로드시
+    loadOutfits();
+    loadRequests();
+    loadXList();
+  </script>
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const input = document.getElementById("searchInput");
+  const clearBtn = document.getElementById("searchClear");
+  const listBox = document.getElementById("listBox");
+
+  if (!input || !listBox) {
+    console.warn("검색 입력창 또는 리스트 박스를 찾을 수 없습니다.");
+    return;
+  }
+
+  console.log("✅ 관리자 검색 기능 연결됨");
+
+  input.addEventListener("input", () => {
+    const term = input.value.trim().toLowerCase();
+    const cards = listBox.querySelectorAll(".card, .outfit-card");
+    cards.forEach((card) => {
+      const text = card.textContent.toLowerCase();
+      card.style.display = !term || text.includes(term) ? "" : "none";
+    });
+  });
+
+  clearBtn?.addEventListener("click", () => {
+    input.value = "";
+    input.dispatchEvent(new Event("input"));
+  });
+});
+</script>
+
+
+
+</body>
+</html>

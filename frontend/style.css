@@ -1,0 +1,1289 @@
+/* ==============================
+   ✅ DolFits 통합 스타일시트
+   (중복 제거 + 호버 복원)
+============================== */
+
+/* ===== 기본 ===== */
+body {
+  margin: 0;
+  background: #fff;
+  font-family: "Noto Sans KR", "Pretendard", sans-serif;
+  overflow-x: hidden;
+}
+
+/* ===== 로고 ===== */
+.logo {
+  position: absolute;
+  left: 50px;
+  top: 73px;
+  font-family: "Cafe24 Ssurround", "Noto Sans KR", sans-serif;
+  font-weight: 800;
+  font-size: 40px;
+  color: #111;
+  cursor: pointer;
+  transition: color 0.4s ease, transform 0.2s ease;
+}
+
+.logo:hover {
+  color: #76a9c3;
+  transform: scale(1.08);
+}
+
+/* ===== 메뉴 ===== */
+.menu-btn {
+  position: fixed;
+  top: 40px;
+  right: 60px;
+  font-size: 36px;
+  cursor: pointer;
+  z-index: 1000;
+  color: #333;
+  transition: transform 0.2s ease;
+}
+
+.menu-btn:hover { transform: scale(1.1); }
+
+.side-menu {
+  position: fixed;
+  top: 0;
+  right: -280px;
+  width: 280px;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+  padding-top: 100px;
+  transition: right 0.3s ease;
+  z-index: 999;
+}
+
+.side-menu.active { right: 0; }
+
+.side-menu ul {
+  list-style: none;
+  margin: 0;
+  padding: 0 30px 0 0;
+  text-align: right;
+}
+
+.side-menu li {
+  font-size: 20px;
+  font-weight: 500;
+  margin: 20px 0;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.side-menu li:hover { color: #3b82f6; }
+.side-menu a { color: inherit; text-decoration: none; }
+
+/* ===== 검색창 ===== */
+.search-bar {
+  position: absolute;
+  top: 80px;
+  left: 540px;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 55px;
+  border: 1.5px solid #76a9c3;
+  border-radius: 10px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  z-index: 50;
+}
+
+.search-bar input {
+  flex: 1;
+  height: 100%;
+  border: none;
+  outline: none;
+  padding: 0 20px;
+  font-size: 18px;
+  background: transparent;
+  color: #333;
+}
+
+.search-bar input::placeholder { color: #aaa; }
+
+/* ===== 자동완성 ===== */
+.suggest-box {
+  position: absolute;
+  top: 136px;
+  left: 540px;
+  transform: translateX(-50%);
+  width: 600px;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  list-style: none;
+  padding: 6px 0;
+  margin: 0;
+  z-index: 9999;
+  display: none;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.suggest-box li {
+  padding: 10px 16px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.suggest-box li:hover {
+  background: #f3f4f6;
+}
+
+/* ===== 착장 영역 ===== */
+.fits-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+  justify-items: center;
+  padding: 60px 0;
+  width: 80%;
+  margin: 0 auto;
+}
+
+/* ===== 착장 박스 ===== */
+.fit-box {
+  position: relative;
+  width: 220px;
+  height: 300px;
+  border-radius: 16px;
+  overflow: hidden;
+  background-color: #e5e5e5;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.fit-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+/* ✅ hover 시 확대 & 어둡게 */
+.fit-box:hover img {
+  transform: scale(1.08);
+  filter: brightness(70%);
+}
+
+/* ===== 착장 정보 ===== */
+.fit-info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  text-align: center;
+  opacity: 0;
+  background: rgba(0, 0, 0, 0.55);
+  padding: 8px 0;
+  transition: opacity 0.3s ease;
+  z-index: 2;
+}
+
+/* ✅ hover 시 표시 */
+.fit-box:hover .fit-info { opacity: 1; }
+
+/* ===== 하트 ===== */
+.heart {
+  cursor: pointer;
+  font-size: 18px;
+  transition: transform 0.2s ease;
+  user-select: none;
+}
+
+.heart.pop { transform: scale(1.4); }
+.heart.active {
+  color: #ff5f8f;
+  text-shadow: 0 0 6px rgba(255,95,143,0.6);
+}
+
+.like-count {
+  font-size: 15px;
+  color: #ffb6c1;
+  transition: transform 0.2s ease;
+}
+
+/* ===== 돌고래 ===== */
+.dolphin1 {
+  position: absolute;
+  left: 1340px;
+  top: 50px;
+  width: 180px;
+  z-index: 1;
+}
+.dolphin2 {
+  position: absolute;
+  top: 595px;
+  left: 106px;
+  width: 180px;
+  z-index: 1;
+  transform: scaleX(-1);
+}
+
+/* ===== 반응형 (모바일) ===== */
+@media (max-width: 768px) {
+  .search-bar {
+    width: 85%;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .fits-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+    width: 90%;
+  }
+
+  .fit-box {
+    width: 100%;
+    height: 240px;
+  }
+
+  .menu-btn { right: 25px; top: 25px; }
+}
+
+/* ===== 🔧 착장 박스 위치 및 크기 조정 ===== */
+
+/* ✅ 전체 착장 컨테이너 아래로 내리기 */
+.fits-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 60px;                 /* 박스 사이 간격 조금 넓힘 */
+  justify-items: center;
+  width: 85%;
+  margin: 0 auto;
+  padding-top: 220px;        /* 🔹 위쪽 여백 (기존보다 훨씬 아래로 내림) */
+  padding-bottom: 100px;     /* 아래 공간도 확보 */
+}
+
+/* ✅ 박스 크기 확대 */
+.fit-box {
+  position: relative;
+  width: 280px;              /* 🔹 가로 크기 키움 */
+  height: 400px;             /* 🔹 세로 크기 키움 */
+  border-radius: 16px;
+  overflow: hidden;
+  background-color: #e5e5e5;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  z-index: 2;                /* 돌고래보다 위 */
+}
+
+/* ✅ 이미지 확대 효과 유지 */
+.fit-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.fit-box:hover img {
+  transform: scale(1.08);
+  filter: brightness(70%);
+}
+
+/* ✅ hover 시 정보 표시 */
+.fit-info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+  opacity: 0;
+  background: rgba(0, 0, 0, 0.55);
+  padding: 10px 0;
+  transition: opacity 0.3s ease;
+  z-index: 2;
+}
+
+.fit-box:hover .fit-info {
+  opacity: 1;
+}
+.top-title {
+  position: absolute;
+  top: 140px;
+  left: 120px;
+  font-family: "Cafe24 Ssurround", sans-serif;
+  font-weight: 700;
+  font-size: 26px;
+  color: #111;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.group-title {
+  position: absolute;
+  top: 90px;
+  left: 880px;
+  font-family: "Cafe24 Ssurround", sans-serif;
+  font-weight: 700;
+  font-size: 26px;
+  color: #111;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.group-container {
+  width: 80%;
+  margin: 160px auto 100px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* 그룹 박스 전체 */
+.group-section {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+}
+
+/* 그룹 이름 헤더 */
+.group-header {
+  background: #f9fafb;
+  color: #111;
+  font-weight: 700;
+  font-size: 18px;
+  padding: 15px 20px;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.group-header:hover {
+  background: #e3f2fd;
+  color: #2563eb;
+}
+
+/* 그룹 내부 착장 리스트 */
+.group-list {
+  display: none;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 20px;
+  padding: 20px;
+  background: #fdfdfd;
+}
+.delete-btn {
+  background: #ff5f5f;
+  border: none;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
+  margin-left: 10px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.delete-btn:hover {
+  background: #e11d48;
+}
+.admin-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin: 10px 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.admin-item .info {
+  flex: 1;
+}
+
+.admin-item .desc {
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.admin-item .thumb img {
+  width: 60px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin: 0 16px;
+}
+
+.admin-item .actions {
+  display: flex;
+  gap: 8px;
+}
+
+.edit-btn {
+  background: #3b82f6;
+  border: none;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.edit-btn:hover {
+  background: #2563eb;
+}
+
+.delete-btn {
+  background: #ef4444;
+  border: none;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.delete-btn:hover {
+  background: #dc2626;
+}
+.admin-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin: 10px 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.admin-item .info {
+  flex: 1;
+}
+
+.admin-item .desc {
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.admin-item .thumb img {
+  width: 60px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin: 0 16px;
+}
+
+.admin-item .actions {
+  display: flex;
+  gap: 8px;
+}
+
+.edit-btn {
+  background: #3b82f6;
+  border: none;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.edit-btn:hover {
+  background: #2563eb;
+}
+
+.delete-btn {
+  background: #ef4444;
+  border: none;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.delete-btn:hover {
+  background: #dc2626;
+}
+/* 🔍 관리자 검색창 */
+.admin-search-box {
+  width: 300px;
+  margin-bottom: 20px;
+  margin-top: 10px;
+}
+
+.admin-search-box input {
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 16px;
+  border: 1.5px solid #76a9c3;
+  border-radius: 8px;
+  outline: none;
+  transition: border 0.2s ease;
+}
+
+.admin-search-box input:focus {
+  border-color: #3b82f6;
+}
+
+.admin-search-box {
+  width: 320px;
+  margin: 30px 0 10px 0;
+}
+
+.admin-search-box input {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 16px;
+  border: 1.5px solid #76a9c3;
+  border-radius: 8px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.admin-search-box input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 8px rgba(59,130,246,0.3);
+}
+
+.admin-list {
+  margin-top: 20px;
+}
+
+.admin-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin: 10px 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.fit-detail {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 80px;
+  width: 80%;
+  margin: 180px auto 100px;
+}
+
+.fit-detail-image img {
+  width: 420px;
+  height: 520px;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
+
+.fit-detail-info {
+  margin-top: 30px;
+}
+
+.fit-detail-info h2 {
+  font-family: "Cafe24 Ssurround", sans-serif;
+  font-weight: 700;
+  font-size: 24px;
+  color: #111;
+  margin-bottom: 20px;
+}
+
+.fit-detail-info li {
+  font-size: 17px;
+  color: #333;
+  line-height: 1.9;
+}
+/* ✅ 카드/이미지 주변에서 텍스트 선택/더블클릭 하이라이트 막기 */
+body, .fits-container, .fit-box, .fit-box * {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;                 /* 텍스트 선택 방지 */
+}
+
+/* ✅ 크롬/사파리의 파란 탭 하이라이트 제거 (모바일/데스크탑 모두) */
+* { -webkit-tap-highlight-color: transparent; }
+
+/* ✅ 이미지 드래그 방지 (이미지 끌어다 놓기 금지) */
+.fit-box img {
+  -webkit-user-drag: none;
+}
+
+/* ✅ 카드 자체는 클릭 가능한 요소처럼 보이게 */
+.fit-box { cursor: pointer; }
+/* 사이드 메뉴 클릭 범위 확장 */
+.side-menu ul { margin: 0; padding: 0; }
+.side-menu li { list-style: none; }
+
+.side-menu a {
+  display: block;           /* ← 텍스트가 아닌 행 전체가 클릭됨 */
+  padding: 12px 18px;       /* 터치 영역 넉넉하게 */
+  text-decoration: none;
+  color: #111;
+}
+
+.side-menu a:hover {
+  background: #f2f5ff;
+}
+
+@media (pointer: coarse) {  /* 모바일 터치 가이드라인(44px 이상) */
+  .side-menu a { padding: 14px 20px; }
+}
+/* 관리자 요청 카드 레이아웃 */
+.admin-item { display:flex; align-items:center; gap:12px; }
+
+
+/* h2에 top-title 클래스를 달고 사용: <h2 class="top-title">인기 착장 TOP12</h2> */
+.top-title{
+  position: absolute;
+  left: 120px;   /* 로고 오른쪽으로 띄우는 값 - 사이트 레이아웃에 맞춰 조절 */
+  top: 110px;    /* 상단에서 얼마 내려올지 */
+  font-size: 24px;
+  font-weight: 700;
+  z-index: 2;
+}
+/* 그만큼 카드가 가려지지 않게 여백 */
+
+
+.fits-container{ margin-top: 70px; }
+/* h2에 top-title 클래스를 달고 사용: <h2 class="top-title">인기 착장 TOP12</h2> */
+.top-title{
+  position: absolute;
+  left: 140px;   /* 로고 오른쪽으로 띄우는 값 - 사이트 레이아웃에 맞춰 조절 */
+  top: 190px;    /* 상단에서 얼마 내려올지 */
+  font-size: 24px;
+  font-weight: 700;
+  z-index: 2;
+}
+/* 그만큼 카드가 가려지지 않게 여백 */
+.fits-container{ margin-top: 70px; }
+
+
+
+
+/* ===== 모바일 전용 반응형 (Contact 페이지) ===== */
+@media (max-width: 480px) {
+  body {
+    padding: 20px;
+    text-align: center;
+  }
+
+  h1, .logo, .site-title {
+    font-size: 24px;   /* 로고 줄이기 */
+    margin-top: 10px;
+  }
+
+  .contact-text {
+    font-size: 14px;   /* 본문 크기 축소 */
+    line-height: 1.5;
+    margin-top: 15px;
+  }
+
+  .contact-text a {
+    word-break: break-all; /* 이메일 주소가 화면 밖으로 안나가게 */
+  }
+
+  .menu-icon {
+    font-size: 22px;   /* 햄버거 아이콘 크기 살짝 줄이기 */
+    position: absolute;
+    top: 15px;
+    right: 15px;
+  }
+}
+
+
+
+
+
+
+/* ===== 📱 DolFits 메인 반응형 보정 ===== */
+@media (max-width: 480px) {
+  /* 로고 위치/크기 */
+  .logo {
+    position: relative;
+    top: 20px;
+    left: 0;
+    font-size: 28px;
+    text-align: center;
+    display: block;
+    margin: 0 auto;
+  }
+
+  /* 메뉴 아이콘 */
+  .menu-btn {
+    top: 20px;
+    right: 20px;
+    font-size: 28px;
+  }
+
+  /* 검색창 중앙 정렬 */
+  .search-bar {
+    position: relative;
+    top: 40px;
+    left: 0;
+    width: 90%;
+    margin: 0 auto;
+    transform: none;
+    height: 45px;
+  }
+
+  .search-bar input {
+    font-size: 14px;
+  }
+
+  /* 착장 이미지 그리드 */
+  .fits-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding-top: 140px; /* 로고+검색창 아래로 내림 */
+    width: 90%;
+  }
+
+  .fit-box {
+    width: 100%;
+    height: 230px;
+  }
+
+  /* 돌고래 이미지 */
+  .dolphin1 {
+    top: 10px;
+    left: auto;
+    right: 10px;
+    width: 60px;
+  }
+
+  .dolphin2 {
+    display: none; /* 아래 돌고래는 모바일에서 생략 */
+  }
+}
+
+
+
+
+/* ===== 📱 인기 착장 순위 (top.html) 전용 반응형 ===== */
+@media (max-width: 480px) {
+  .top-title {
+    position: relative;
+    top: 80px;              /* 로고/검색창 아래로 내리기 */
+    left: 0;
+    text-align: center;
+    font-size: 18px;
+    display: block;
+    margin-bottom: 20px;
+  }
+
+  .fits-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    width: 90%;
+    padding-top: 140px;
+    margin: 0 auto;
+  }
+
+  .fit-box {
+    width: 100%;
+    height: 230px;
+  }
+
+  /* 돌고래 위치 조정 */
+  .dolphin1 {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    left: auto;
+    width: 50px;
+  }
+
+  .dolphin2 {
+    display: none; /* 아래쪽 돌고래는 모바일에서는 숨김 */
+  }
+}
+
+
+/* ===== 📱 모바일에서는 hover 없이 항상 정보/하트 표시 ===== */
+@media (max-width: 480px) {
+  .fit-info {
+    opacity: 1 !important;         /* 항상 보이게 */
+    background: rgba(0, 0, 0, 0.4); /* 살짝 반투명 배경 */
+    font-size: 14px;
+    padding: 6px 0;
+  }
+
+  .fit-box img {
+    filter: brightness(100%);       /* hover가 없으니까 기본 밝게 */
+    transform: none;                /* 확대 효과 제거 */
+  }
+
+  /* 하트 버튼 항상 표시 */
+  .heart {
+    opacity: 1 !important;
+    position: absolute;
+    bottom: 10px;
+    right: 12px;
+    font-size: 18px;
+  }
+}
+
+
+/* ===== 📱 착장 상세(detail.html) 반응형 ===== */
+@media (max-width: 480px) {
+  .fit-detail {
+    flex-direction: column;    /* 세로 정렬 */
+    align-items: center;
+    gap: 30px;
+    width: 95%;
+    margin: 120px auto 60px;
+  }
+
+  .fit-detail-image img {
+    width: 90%;                /* 화면에 맞게 축소 */
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+  .fit-detail-info {
+    width: 90%;
+    text-align: left;
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  .fit-detail-info h2 {
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+
+  .fit-detail-info li {
+    font-size: 14px;
+  }
+
+  /* 검색창과 로고 위치 정돈 */
+  .search-bar {
+    width: 90%;
+    top: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .logo {
+    position: relative;
+    top: 20px;
+    left: 0;
+    font-size: 28px;
+    text-align: center;
+  }
+}
+
+/* ===== 📸 그룹별 착장 (group.html) 스타일 개선 ===== */
+
+/* 상단 제목 */
+.group-title {
+  position: relative;
+  top: 100px;
+  text-align: center;
+  font-size: 26px;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 40px;
+}
+
+/* 그룹 섹션 전체 박스 */
+.group-section {
+  width: 90%;
+  margin: 0 auto 25px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+  overflow: hidden;
+  transition: all 0.25s ease;
+}
+
+/* 그룹 헤더 */
+.group-header {
+  background: #f8fafc;
+  color: #111;
+  font-weight: 700;
+  font-size: 18px;
+  padding: 16px 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.group-header:hover {
+  background: #e0f2fe;
+  color: #2563eb;
+}
+
+.group-header::after {
+  content: "▼";
+  font-size: 14px;
+  color: #999;
+  transition: transform 0.3s ease;
+}
+
+/* 펼쳐졌을 때 화살표 회전 */
+.group-list[style*="grid"] ~ .group-header::after {
+  transform: rotate(-180deg);
+}
+
+/* 그룹 내부 이미지 리스트 */
+.group-list {
+  display: none;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 18px;
+  padding: 20px;
+  background: #fdfdfd;
+  border-top: 1px solid #eee;
+}
+
+/* 착장 박스 */
+.fit-box {
+  position: relative;
+  width: 100%;
+  height: 260px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #f1f5f9;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.fit-box:hover {
+  transform: scale(1.03);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.fit-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.25s ease;
+}
+
+.fit-box:hover img {
+  transform: scale(1.08);
+}
+
+.fit-info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: rgba(0,0,0,0.55);
+  color: #fff;
+  text-align: center;
+  font-weight: 500;
+  font-size: 15px;
+  padding: 8px 0;
+}
+
+/* ===== 📱 모바일 반응형 ===== */
+@media (max-width: 480px) {
+  .group-title {
+    top: 80px;
+    font-size: 22px;
+    margin-bottom: 30px;
+  }
+
+  .group-section {
+    width: 95%;
+  }
+
+  .group-header {
+    font-size: 16px;
+    padding: 14px 16px;
+  }
+
+  .group-list {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    padding: 14px;
+  }
+
+  .fit-box {
+    height: 200px;
+  }
+
+  .fit-info {
+    font-size: 13px;
+  }
+}
+
+
+
+
+
+
+
+
+/* ===== ✅ 모든 페이지 공통 스크롤 및 햄버거 위치 보정 ===== */
+html, body {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important; /* ✅ 가로 스크롤 완전 차단 */
+}
+
+/* 전체 요소 박스 크기 계산 통일 */
+* {
+  box-sizing: border-box;
+}
+
+/* ✅ 햄버거 버튼 고정 및 항상 보이게 */
+.menu-btn {
+  position: fixed !important;
+  top: 18px;
+  right: 12px;
+  font-size: 30px;
+  color: #333;
+  cursor: pointer;
+  z-index: 9999 !important; /* ✅ 항상 맨 위 */
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 10px;
+  padding: 6px 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.menu-btn:hover {
+  transform: scale(1.05);
+}
+
+/* ✅ 메뉴 패널 고정 */
+.side-menu {
+  position: fixed !important;
+  top: 0;
+  right: -280px;
+  width: 280px;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+  padding-top: 100px;
+  transition: right 0.3s ease;
+  z-index: 9998;
+}
+
+.side-menu.active {
+  right: 0;
+}
+
+/* ===== 📱 그룹별 착장 (group.html) 반응형 보정 ===== */
+.group-container {
+  width: 100%;                /* ✅ 100vw → 100% 로 수정 */
+  margin: 120px auto 80px;
+  padding: 0 12px;            /* 좌우 여백만 살짝 */
+}
+
+.group-section {
+  max-width: 100%;
+  overflow: hidden;           /* ✅ 내부 넘침 방지 */
+}
+
+.group-list {
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 16px;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+@media (max-width: 480px) {
+  .group-container {
+    padding: 0 8px;
+  }
+  .fit-box {
+    width: 100%;
+    height: 220px;
+  }
+}
+
+/* 햄버거 아이콘만 보이게 (배경/그림자/블러 모두 제거) */
+.menu-btn {
+  position: fixed !important;
+  top: 18px;
+  right: 12px;
+  z-index: 9999 !important;
+
+  /* 아이콘만 남기기 */
+  background: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+
+  /* 아이콘 스타일 */
+  font-size: 30px;
+  line-height: 1;
+  color: #333;
+  cursor: pointer;
+}
+
+/* 보이지 않는 터치 영역(눌리기 쉽게) — 시각엔 안 보임 */
+.menu-btn::before {
+  content: "";
+  position: absolute;
+  inset: -12px;       /* 아이콘 주변 12px 여유 터치 영역 */
+}
+
+
+
+
+
+
+
+
+
+/* ===== 📱 모바일 자동완성 리스트 반응형 (수정 완전판) ===== */
+@media (max-width: 480px) {
+  .search-bar {
+    position: relative; /* ✅ 기준 고정 (중요!) */
+    z-index: 10;
+  }
+
+  .suggest-box {
+    position: absolute;
+    top: 140px;               /* ✅ 검색창 바로 아래 */
+    left: 240px;
+    width: 100%;             /* ✅ input 폭에 맞춤 */
+    margin-top: 6px;
+    background: #fff;        /* ✅ 확실히 보이게 */
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+    max-height: 220px;
+    overflow-y: auto;
+    font-size: 14px;
+    z-index: 9999;           /* ✅ 햄버거보다 위 */
+   
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  .suggest-box li {
+    padding: 10px 12px;
+    border-bottom: 1px solid #eee;
+    color: #333;
+  }
+
+  .suggest-box li:last-child {
+    border-bottom: none;
+  }
+
+  .suggest-box li:hover {
+    background: #f4f6fb;
+  }
+}
+
+
+
+
+
+/* ✅ PC 기본 스타일 (그대로 유지) */
+.fit-box {
+  width: 350px;
+  height: 450px;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease;
+}
+.fit-box:hover {
+  transform: scale(1.03);
+}
+
+/* ✅ PC 화면에서 fit-list 유지 */
+.fits-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 24px;
+  max-width: 1200px;
+  margin: 40px auto;
+}
+
+/* ✅ 모바일(태블릿 이하) 전용 반응형 */
+@media (max-width: 768px) {
+  .fits-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 14px;
+    padding: 0 8px;
+  }
+
+  .fit-box {
+    width: 100%;
+    height: 220px;
+    border-radius: 10px;
+  }
+
+  .fit-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+/* ✅ 전체 fits 영역 여백 보정 */
+#mainFits,
+.fits-container {
+  margin-top: 30px;   /* 🔹 검색창 아래로 30px 띄움 */
+}
+
+/* 모바일에서는 살짝 덜 띄워서 균형 유지 */
+@media (max-width: 768px) {
+  #mainFits,
+  .fits-container {
+    margin-top: 100px; /* 🔹 모바일에선 약간만 띄움 */
+  }
+}
+
+
+
+@media (max-width: 768px) {
+  .top-title, 
+  h1[data-i18n="top_title"] {
+    margin-top: -25%;
+    font-size: 24px;
+  }
+}
+
+
+
+
+/* ✅ 언어 전환 버튼 */
+.lang-toggle {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 9999;
+  background: rgba(255, 255, 255, 0.8);
+  color: #222;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  transition: all 0.2s ease;
+}
+.lang-toggle:hover {
+  background: #3b82f6;
+  color: white;
+}
+
+

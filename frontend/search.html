@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920, height=1200">
+  <title>DolFits 검색</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="date-page">
+
+  <h1>🔍 착장 검색</h1>
+  <div class="date-filter-box">
+  <input type="text" id="keyword" placeholder="그룹명 또는 이름을 입력하세요" autocomplete="off">
+  <input type="date" id="dateFilter">
+  <button id="searchBtn">검색</button>
+</div>
+
+<!-- 자동완성 리스트 -->
+<ul id="suggestList" class="suggest-box"></ul>
+
+<div id="searchResults" class="fits-container"></div>
+
+
+  <div class="date-filter-box">
+    <input type="text" id="keyword" placeholder="그룹명 또는 이름을 입력하세요">
+    <input type="date" id="dateFilter">
+    <button id="searchBtn">검색</button>
+  </div>
+
+  <div id="searchResults" class="fits-container"></div>
+
+  <script src="search.js"></script>
+  <script src="./lang.js" defer></script>
+</body>
+</html>

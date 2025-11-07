@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title data-i18n="contact_title">문의 | DolFits</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Cafe24+Ssurround&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: "Noto Sans KR", sans-serif;
+      background: #f9fafc;
+      color: #222;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .contact-container {
+      background: white;
+      padding: 60px 40px;
+      border-radius: 16px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      margin-top: 140px;
+      width: 90%;
+      max-width: 600px;
+    }
+
+    .contact-container h2 {
+      font-size: 26px;
+      margin-bottom: 20px;
+      font-weight: 700;
+    }
+
+    .contact-container p {
+      font-size: 17px;
+      line-height: 1.8;
+    }
+
+    .contact-container b {
+      color: #0078d7;
+    }
+
+    @media (max-width: 480px) {
+      .contact-container {
+        margin-top: 100px;
+        padding: 40px 25px;
+      }
+      .contact-container h2 {
+        font-size: 22px;
+      }
+      .contact-container p {
+        font-size: 15px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="logo" data-i18n="site_title">DolFits</div>
+
+  <div class="contact-container">
+    <h2 data-i18n="contact_heading">문의하기</h2>
+    <p data-i18n="contact_info">
+      문의는 <b>dolfits07@gmail.com</b> 또는 인스타그램
+      <b>@dolfits_official</b> 로 연락해주세요 💌
+    </p>
+  </div>
+<script src="./menu.js" defer></script>
+  <script src="./lang.js" defer></script>
+  
+</body>
+</html>

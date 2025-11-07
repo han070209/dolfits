@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>착장 상세 | DolFits</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- ✅ 메뉴 -->
+  <script src="./menu.js" defer></script>
+  <div class="side-menu">
+    <ul>
+      <li><a href="/">홈</a></li>
+      <li><a href="/request">착장 요청</a></li>
+      <li><a href="/date">날짜별 착장</a></li>
+      <li><a href="/group">그룹별 착장</a></li>
+      <li><a href="/top">인기 착장 순위</a></li>
+      <li><a href="/contact">문의</a></li>
+    </ul>
+  </div>
+
+  <!-- ✅ 로고 / 검색창 -->
+  <div class="logo" onclick="window.location.href='/'">DolFits</div>
+  <div class="search-bar" id="searchBar">
+    <input id="keyword" type="text" placeholder="그룹명 또는 이름을 입력하세요" autocomplete="off">
+  </div>
+  <ul id="suggestList" class="suggest-box"></ul>
+
+  <!-- ✅ 상세 영역 -->
+  <main class="fit-detail" id="detailContainer" style="margin-top:180px;"></main>
+
+  <!-- ✅ 스크립트 -->
+  <script src="./menu.js" defer></script>
+  <script src="./searchMain.js" defer></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const container = document.getElementById("detailContainer");
+      const params = new URLSearchParams(window.location.search);
+      const file = params.get("file");
+      if (!file) return;
+
+      try {
+        const res = await fetch(`/data/outfitss.json?t=${Date.now()}`, { cache: "no-store" });
+        if (!res.ok) throw new Error("데이터 불러오기 실패");
+        const data = await res.json();
+        const fit = data.find(f => f.filename === file);
+        if (!fit) {
+          container.innerHTML = "<p style='color:#777;'>해당 착장 정보를 찾을 수 없습니다 😢</p>";
+          return;
+        }
+
+        // ✅ 클래스 기반 구조 (CSS로 제어 가능)
+        container.innerHTML = `
+          <div class="fit-detail-image">
+            <img src="/uploads/${encodeURIComponent(fit.filename)}" alt="${fit.originalname}" />
+          </div>
+          <div class="fit-detail-info">
+            <h2>착장정보</h2>
+            <ul>
+              <li><b>그룹명:</b> ${fit.groupName || '정보 없음'}</li>
+              <li><b>이름:</b> ${fit.name || '정보 없음'}</li>
+              <li><b>날짜:</b> ${fit.date || '정보 없음'}</li>
+              ${
+                fit.items && fit.items.length > 0
+                  ? fit.items.map(i => `<li><b>${i.label || '항목'}:</b> <a href="${i.link}" target="_blank">${i.link}</a></li>`).join('')
+                  : '<li><i>링크 정보 없음</i></li>'
+              }
+            </ul>
+          </div>
+        `;
+      } catch (err) {
+        console.error("❌ 착장 상세 로드 오류:", err);
+        container.innerHTML = "<p style='color:#777;'>데이터를 불러올 수 없습니다.</p>";
+      }
+
+      // 검색 엔터 시 메인으로 이동
+      const keywordInput = document.getElementById("keyword");
+      keywordInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter" && keywordInput.value.trim() !== "") {
+          const query = encodeURIComponent(keywordInput.value.trim());
+          window.location.href = `/index.html?search=${query}`;
+        }
+      });
+    });
+  </script>
+
+  <!-- ✅ 모바일 반응형 추가 -->
+  <style>
+    @media (max-width: 480px) {
+      .fit-detail {
+        flex-direction: column;
+        align-items: center;
+        gap: 30px;
+        width: 95%;
+        margin: 120px auto 60px;
+      }
+
+      .fit-detail-image img {
+        width: 90%;
+        height: auto;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      }
+
+      .fit-detail-info {
+        width: 90%;
+        text-align: left;
+        font-size: 15px;
+        line-height: 1.7;
+      }
+
+      .fit-detail-info h2 {
+        font-size: 18px;
+        margin-bottom: 12px;
+      }
+
+      .fit-detail-info li {
+        font-size: 14px;
+      }
+    }
+  </style>
+  <script src="./lang.js" defer></script>
+</body>
+</html>

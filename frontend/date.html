@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>날짜별 착장 | DolFits</title>
+  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      background: #f9fafb;
+      font-family: "Pretendard", sans-serif;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 100px;
+      overflow-x: hidden;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 30px;
+    }
+
+    /* === 날짜 선택 박스 === */
+    .date-select-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    select {
+      border: 1px solid #76a9c3;
+      border-radius: 8px;
+      padding: 10px 15px;
+      font-size: 16px;
+      background-color: #fff;
+      cursor: pointer;
+      transition: box-shadow 0.2s ease;
+    }
+
+    select:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(118, 169, 195, 0.4);
+    }
+
+    button {
+      background: #76a9c3;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    button:hover {
+      background: #5a8aa7;
+    }
+
+    /* === 연도 리스트 === */
+    .year-list {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 30px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .year-item {
+      cursor: pointer;
+      font-size: 18px;
+      padding: 6px 0;
+      color: #333;
+      width: 100px;
+      text-align: center;
+      border-radius: 6px;
+      transition: background 0.2s ease;
+    }
+
+    .year-item:hover {
+      background: #e0ecf2;
+    }
+
+    /* === 결과 그리드 === */
+    #dateFits {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 40px;
+      justify-items: center;
+      padding: 20px 80px;
+      max-width: 1200px;
+      min-height: 300px;
+    }
+
+    .fit-box {
+      width: 250px;
+      height: 330px;
+      background: #d9d9d9;
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .fit-box:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .fit-info {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      color: #fff;
+      text-align: center;
+      padding: 8px 0;
+      font-size: 16px;
+      font-weight: 500;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .fit-box:hover .fit-info {
+      opacity: 1;
+    }
+
+    /* === 빈 상태 메시지 === */
+    .empty-state {
+      text-align: center;
+      margin-top: 60px;
+      color: #777;
+      font-size: 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .empty-state img {
+      width: 120px;
+      opacity: 0.7;
+    }
+
+    /* === 하단 영역 === */
+    footer {
+      margin-top: 80px;
+      padding: 40px;
+      text-align: center;
+      color: #999;
+      font-size: 14px;
+    }
+
+
+/* ===== 📱 날짜별 착장(date.html) 반응형 ===== */
+@media (max-width: 480px) {
+  body {
+    padding-top: 80px;
+  }
+
+  .logo {
+    position: relative;
+    top: 10px;
+    left: 0;
+    text-align: center;
+    font-size: 26px;
+    margin-bottom: 10px;
+  }
+
+  h1 {
+    font-size: 20px;
+    text-align: center;
+    margin-bottom: 25px;
+  }
+
+  /* 날짜 선택 부분 세로 정렬 */
+  .date-select-box {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    width: 90%;
+  }
+
+  select,
+  button {
+    width: 100%;
+    font-size: 15px;
+    padding: 12px;
+  }
+
+  #dateFits {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding: 10px;
+  }
+
+  .fit-box {
+    width: 100%;
+    height: 220px;
+  }
+
+  .fit-info {
+    opacity: 1 !important;          /* 항상 표시 */
+    font-size: 13px;
+    background: rgba(0, 0, 0, 0.45);
+    padding: 6px 0;
+  }
+
+  .fit-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .empty-state img {
+    width: 100px;
+  }
+
+  .empty-state p {
+    font-size: 14px;
+    text-align: center;
+  }
+
+  footer {
+    font-size: 12px;
+    padding: 20px;
+    margin-top: 40px;
+  }
+}
+
+
+
+
+  </style>
+</head>
+<body>
+  <div class="logo">DolFits</div>
+  <h1 data-i18n="date_title_full">📅 날짜별 착장 보기</h1>
+
+
+  <!-- ✅ 년/월/일 선택 UI -->
+  <div class="date-select-box">
+    <select id="yearSelect">
+  <option value="" data-i18n="select_year">연도 선택 ▼</option>
+</select>
+<select id="monthSelect">
+  <option value="" data-i18n="select_month">월 선택 ▼</option>
+</select>
+<select id="daySelect">
+  <option value="" data-i18n="select_day">일 선택 ▼</option>
+</select>
+
+    <button id="filterBtn" data-i18n="search_btn">검색</button>
+
+  </div>
+
+  <!-- ✅ 아래로 펼쳐지는 연도 리스트 -->
+  <div class="year-list" id="yearList"></div>
+
+  <!-- ✅ 검색 결과 -->
+  <div id="dateFits"></div>
+
+  <!-- ✅ 하단 메시지 (빈 화면용) -->
+  <div id="emptyMessage" class="empty-state" style="display:none;">
+    <img src="images/dolphin.png" alt="dolphin">
+    <p data-i18n="date_empty_msg">🐬 아직 이 날짜의 착장이 없어요.<br>다른 날짜를 선택해볼까요?</p>
+
+  </div>
+
+  <footer data-i18n="date_footer">
+  © 2025 DolFits | 날짜별 착장 아카이브
+</footer>
+
+
+  <script>
+    const yearSelect = document.getElementById("yearSelect");
+    const monthSelect = document.getElementById("monthSelect");
+    const daySelect = document.getElementById("daySelect");
+    const yearList = document.getElementById("yearList");
+    const fitsContainer = document.getElementById("dateFits");
+    const emptyMessage = document.getElementById("emptyMessage");
+
+    // 연도 리스트 자동 생성
+    const currentYear = new Date().getFullYear();
+    for (let y = currentYear; y >= 2020; y--) {
+      const option = document.createElement("option");
+      option.value = y;
+      option.textContent = y;
+      yearSelect.appendChild(option);
+
+      const yearItem = document.createElement("div");
+      yearItem.className = "year-item";
+      yearItem.textContent = y;
+      yearItem.addEventListener("click", () => {
+        yearSelect.value = y;
+        yearList.style.display = "none";
+      });
+      yearList.appendChild(yearItem);
+    }
+
+    // 월 리스트 생성
+    for (let m = 1; m <= 12; m++) {
+      const option = document.createElement("option");
+      option.value = m.toString().padStart(2, "0");
+      option.textContent = `${m}월`;
+      monthSelect.appendChild(option);
+    }
+
+    // 일 리스트 생성
+    for (let d = 1; d <= 31; d++) {
+      const option = document.createElement("option");
+      option.value = d.toString().padStart(2, "0");
+      option.textContent = `${d}일`;
+      daySelect.appendChild(option);
+    }
+
+    // 연도 선택 클릭 시 토글 + 애니메이션
+    yearSelect.addEventListener("click", () => {
+      yearList.style.display = yearList.style.display === "flex" ? "none" : "flex";
+    });
+
+    // ✅ 최근 선택 기억 (localStorage)
+    window.addEventListener("load", () => {
+      const saved = JSON.parse(localStorage.getItem("dateSelection"));
+      if (saved) {
+        yearSelect.value = saved.year || "";
+        monthSelect.value = saved.month || "";
+        daySelect.value = saved.day || "";
+      }
+    });
+
+    // ✅ 검색 버튼
+    document.getElementById("filterBtn").addEventListener("click", async () => {
+      const year = yearSelect.value;
+      const month = monthSelect.value;
+      const day = daySelect.value;
+
+      localStorage.setItem("dateSelection", JSON.stringify({ year, month, day }));
+
+      if (!year && !month && !day) {
+        alert("연도, 월, 일 중 최소 하나를 선택해주세요!");
+        return;
+      }
+
+      const res = await fetch(`/data/outfitss.json?t=${Date.now()}`);
+      const data = await res.json();
+
+      fitsContainer.innerHTML = "";
+      emptyMessage.style.display = "none";
+
+      const filtered = data.filter(f => {
+        if (!f.date) return false;
+        const [y, m, d] = f.date.split("-");
+        if (year && y !== year) return false;
+        if (month && m !== month) return false;
+        if (day && d !== day) return false;
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        emptyMessage.style.display = "flex";
+        return;
+      }
+
+      filtered.forEach(f => {
+        const box = document.createElement("div");
+        box.className = "fit-box";
+
+        const img = document.createElement("img");
+        img.src = `/uploads/${encodeURIComponent(f.filename)}`;
+        img.alt = f.originalname;
+
+        const info = document.createElement("div");
+        info.className = "fit-info";
+        info.textContent = `${f.date} · ${f.groupName} · ${f.name}`;
+
+        box.appendChild(img);
+        box.appendChild(info);
+        fitsContainer.appendChild(box);
+      });
+    });
+  </script>
+
+  <script src="./menu.js" defer></script>
+  <script src="./lang.js" defer></script>
+</body>
+</html>
