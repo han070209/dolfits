@@ -13,8 +13,8 @@ import dotenv from "dotenv";
 import { fileURLToPath } from "url";
 import path from "path";
 import { spawn } from "child_process";
-import AWS from "aws-sdk";
-import multerS3 from "multer-s3";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+
 
 
 
@@ -87,28 +87,18 @@ const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.join(__dirname, ".env") });
 
 // 🔹 AWS S3 설정
-AWS.config.update({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+
+const s3 = new S3Client({
   region: process.env.AWS_REGION,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  },
 });
 
-const s3 = new AWS.S3();
 
 
 
-// ✅ AWS S3 업로드 설정
-const upload = multer({
-  storage: multerS3({
-    s3: s3,
-    bucket: process.env.AWS_BUCKET_NAME, // ✅ Render 환경변수와 일치해야 함
-    acl: "public-read",
-    key: function (req, file, cb) {
-      const filename = `${Date.now()}-${file.originalname}`;
-      cb(null, filename);
-    },
-  }),
-});
 
 
 
@@ -249,18 +239,35 @@ app.get("/outfits", basicAdminAuth, (req, res) => {
   res.json({ success: true, outfits: list });
 });
 
-app.post("/upload", basicAdminAuth, upload.single("image"), (req, res) => {
+const upload = multer({ dest: "temp_uploads/" });
+
+app.post("/upload", basicAdminAuth, upload.single("image"), async (req, res) => {
   try {
-    if (!req.file) {
-      return res.status(400).json({ success: false, error: "no_file" });
-    }
+    if (!req.file) return res.status(400).json({ success: false, error: "no_file" });
+
+    const fileContent = fs.readFileSync(req.file.path);
+    const filename = `${Date.now()}-${req.file.originalname}`;
+    const s3Key = `uploads/${filename}`;
+
+    // ✅ S3 업로드
+    const uploadParams = {
+      Bucket: process.env.S3_BUCKET_NAME,
+      Key: s3Key,
+      Body: fileContent,
+      ContentType: req.file.mimetype,
+    };
+    await s3.send(new PutObjectCommand(uploadParams));
+
+    fs.unlinkSync(req.file.path);
+
+    // ✅ 여기가 제일 중요
+    const imageUrl = `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${s3Key}`;
 
     const { groupName = "", name = "", date = "" } = req.body || {};
     const list = loadJson(OUTFITS_JSON);
-
     const rec = {
-      filename: req.file.key,            // ✅ S3 저장 키 사용
-      path: req.file.location,           // ✅ S3 URL
+      filename,
+      path: imageUrl, // ✅ 무조건 S3 전체 경로 저장
       uploadedAt: Date.now(),
       groupName,
       name,
@@ -271,12 +278,14 @@ app.post("/upload", basicAdminAuth, upload.single("image"), (req, res) => {
 
     list.unshift(rec);
     saveJson(OUTFITS_JSON, list);
+
     res.json({ success: true, outfit: rec });
   } catch (e) {
-    logger.error("upload error", e);
-    res.status(500).json({ success: false, error: "upload_failed" });
+    console.error("❌ upload error:", e);
+    res.status(500).json({ success: false, error: e.message });
   }
 });
+
 
 
 app.put("/update-outfit/:filename", basicAdminAuth, (req, res) => {
@@ -549,7 +558,8 @@ app.post("/api/auto-approve/:filename", basicAdminAuth, (req, res) => {
   const outfits = loadJson(OUTFITS_JSON);
   const finalRec = {
     filename: destFilename,
-    path: `/uploads/${destFilename}`,
+    path: `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/uploads/${req.file.key}`,
+
     uploadedAt: Date.now(),
     groupName: rec.groupName || "",
     name: rec.name || "",
@@ -626,7 +636,8 @@ app.post("/auto-approve-x/:filename", basicAdminAuth, (req, res) => {
     const outfits = loadJson(OUTFITS_JSON);
     const record = {
       filename,
-      path: `/uploads/${filename}`,
+      path: `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/uploads/${req.file.key}`,
+
       uploadedAt: Date.now(),
       groupName: item.groupName || "",
       name: item.name || item.meta?.memberName || "",

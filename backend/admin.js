@@ -276,9 +276,14 @@ async function loadOutfits() {
     const header = document.createElement("div");
     header.className = "outfit-header";
 
+
+if (!fit.path.startsWith("http")) img.src = `/uploads/${encodeURIComponent(fit.filename)}`;
+
+
     const img = document.createElement("img");
-    img.src = fit.path;
-    img.className = "thumb";
+img.src = fit.path; // ✅ f → fit 으로 수정
+img.className = "thumb";
+
 
     const meta = document.createElement("div");
     meta.className = "meta";
