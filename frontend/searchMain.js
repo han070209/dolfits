@@ -91,7 +91,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     box.className = "fit-box";
 
     const img = document.createElement("img");
-    img.src = `/uploads/${encodeURIComponent(f.filename)}?v=${Date.now()}`;
+    img.src = `${window.location.origin}/uploads/${encodeURIComponent(f.filename)}?v=${Date.now()}`;
     img.alt = f.originalname || "fit image";
 
     img.addEventListener("click", () => {
