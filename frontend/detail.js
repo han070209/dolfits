@@ -9,10 +9,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     const fit = data.find(f => f.filename === file);
     if (!fit) return;
 
-    // ✅ 화면에 표시할 부분
+    // ✅ 이미지 경로 처리
+    const imgSrc = fit.path
+      ? fit.path
+      : `${window.location.origin}/uploads/${encodeURIComponent(fit.filename)}`;
+
+    // ✅ 화면 표시
     document.body.innerHTML += `
       <div class="detail-box">
-        <img src="/uploads/${encodeURIComponent(fit.filename)}" class="fit-image" />
+        <img src="${imgSrc}" class="fit-image" />
         <div class="fit-info">
           <h2>${fit.groupName || "그룹 없음"} - ${fit.name || "이름 없음"}</h2>
           <p>날짜: ${fit.date || "정보 없음"}</p>
@@ -23,5 +28,3 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.error("❌ detail 로드 오류:", err);
   }
 });
-
-
