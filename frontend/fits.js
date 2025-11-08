@@ -32,7 +32,7 @@ const shuffled = sorted
       if (!f) return;
 
       const img = document.createElement('img');
-      img.src = `/uploads/${encodeURIComponent(f.filename)}?v=${Date.now()}`;
+      img.src = f.path;
       img.alt = f.originalname || "fit image";
 
       const info = document.createElement('div');
