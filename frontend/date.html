@@ -392,6 +392,14 @@ img.addEventListener("error", () => {
         const info = document.createElement("div");
         info.className = "fit-info";
         info.textContent = `${f.date} · ${f.groupName} · ${f.name}`;
+        
+        const goDetail = () => {
+    window.location.href = `/detail.html?file=${encodeURIComponent(f.filename)}`;
+  };
+  box.addEventListener("click", goDetail);
+  box.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); goDetail(); }
+  });
 
         box.appendChild(img);
         box.appendChild(info);
@@ -399,15 +407,7 @@ img.addEventListener("error", () => {
       });
     });
     // ✅ 상세 페이지 이동
-const goDetail = () => {
-  window.location.href = `/detail.html?file=${encodeURIComponent(f.filename)}`;
-};
-box.addEventListener("click", goDetail);
-box.addEventListener("keydown", (e) => {
-  if (e.key === "Enter" || e.key === " ") { e.preventDefault(); goDetail(); }
-});
-box.setAttribute("role", "button");
-box.tabIndex = 0;
+
 
   </script>
 
