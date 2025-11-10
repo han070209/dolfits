@@ -354,8 +354,9 @@
         return;
       }
 
-      const res = await fetch(`/data/outfitss.json?t=${Date.now()}`);
-      const data = await res.json();
+      const res = await fetch(`/data/outfitss.json?t=${Date.now()}`, { cache: "no-store" });
+const raw = await res.json();
+const data = Array.isArray(raw) ? raw : (raw.outfits || []);
 
       fitsContainer.innerHTML = "";
       emptyMessage.style.display = "none";
@@ -379,9 +380,15 @@
         box.className = "fit-box";
 
         const img = document.createElement("img");
-        img.src = `/uploads/${encodeURIComponent(f.filename)}`;
-        img.alt = f.originalname;
-
+        const src = f.path || `/uploads/${encodeURIComponent(f.filename)}`;
+img.src = `${src}?v=${Date.now()}`;
+img.alt = f.originalname || "fit";
+img.loading = "lazy";
+img.addEventListener("error", () => {
+  img.style.background = "#eee";
+  img.style.objectFit = "contain";
+  img.src = ""; // 깨진 아이콘 제거
+});
         const info = document.createElement("div");
         info.className = "fit-info";
         info.textContent = `${f.date} · ${f.groupName} · ${f.name}`;
@@ -391,6 +398,17 @@
         fitsContainer.appendChild(box);
       });
     });
+    // ✅ 상세 페이지 이동
+const goDetail = () => {
+  window.location.href = `/detail.html?file=${encodeURIComponent(f.filename)}`;
+};
+box.addEventListener("click", goDetail);
+box.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" || e.key === " ") { e.preventDefault(); goDetail(); }
+});
+box.setAttribute("role", "button");
+box.tabIndex = 0;
+
   </script>
 
   <script src="./menu.js" defer></script>
