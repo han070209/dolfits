@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title >그룹별 착장 | DolFits</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>그룹별 착장 | DolFits</title>
   <link href="https://fonts.googleapis.com/css2?family=Cafe24+Ssurround&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
@@ -17,16 +17,18 @@
   <script>
     async function loadByGroup() {
       try {
+        // ✅ 캐시 방지 + 포맷 방어
         const res = await fetch(`/data/outfitss.json?t=${Date.now()}`, { cache: "no-store" });
         if (!res.ok) throw new Error("outfitss.json 로드 실패");
-        const data = await res.json();
+        const raw = await res.json();
+        const data = Array.isArray(raw) ? raw : (raw.outfits || []);
+        if (!data.length) return;
 
         // ✅ 그룹별로 묶기
         const grouped = {};
         data.forEach(f => {
-          const group = f.groupName || "기타";
-          if (!grouped[group]) grouped[group] = [];
-          grouped[group].push(f);
+          const group = f.groupName && f.groupName.trim() ? f.groupName : "기타";
+          (grouped[group] ||= []).push(f);
         });
 
         const container = document.getElementById("groupContainer");
@@ -42,27 +44,46 @@
 
           const list = document.createElement("div");
           list.className = "group-list";
-          list.style.display = "none";
+          list.style.display = "none"; // 처음엔 접기
 
           // ✅ 착장 카드 생성
           outfits.forEach(f => {
             const box = document.createElement("div");
             box.className = "fit-box";
+            box.setAttribute("role", "button");
+            box.tabIndex = 0;
 
+            // ✅ S3 우선 + 로컬 폴백 + 캐시버스터 + 에러 핸들링 + lazy
             const img = document.createElement("img");
-            img.src = `/uploads/${encodeURIComponent(f.filename)}?v=${Date.now()}`;
+            const src = f.path || `/uploads/${encodeURIComponent(f.filename)}`;
+            img.src = `${src}?v=${Date.now()}`;
             img.alt = f.originalname || "fit";
+            img.loading = "lazy";
+            img.addEventListener("error", () => {
+              img.style.background = "#eee";
+              img.style.objectFit = "contain";
+              img.src = "";
+            });
 
             const info = document.createElement("div");
             info.className = "fit-info";
-            info.textContent = `${f.name || "이름 없음"}`;
+            info.textContent = f.name && f.name.trim() ? f.name : "이름 없음";
+
+            // ✅ 터치/클릭 → 상세 페이지 이동
+            const goDetail = () => {
+              window.location.href = `/detail.html?file=${encodeURIComponent(f.filename)}`;
+            };
+            box.addEventListener("click", goDetail);
+            box.addEventListener("keydown", (e) => {
+              if (e.key === "Enter" || e.key === " ") { e.preventDefault(); goDetail(); }
+            });
 
             box.appendChild(img);
             box.appendChild(info);
             list.appendChild(box);
           });
 
-          // ✅ 클릭 시 펼치기 / 닫기
+          // ✅ 그룹 헤더 클릭 시 펼치기/닫기 (다른 그룹은 닫힘)
           header.addEventListener("click", () => {
             const isOpen = list.style.display === "grid";
             document.querySelectorAll(".group-list").forEach(l => (l.style.display = "none"));
